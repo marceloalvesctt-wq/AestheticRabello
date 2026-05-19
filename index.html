@@ -3,142 +3,123 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aesthetic Rabello — Sistema de Gestão</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Aesthetics Rabello — Gestão</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0f0f0d;
-  --surface: #181815;
-  --surface2: #1f1f1b;
-  --border: rgba(255,255,255,0.08);
-  --border2: rgba(255,255,255,0.14);
-  --gold: #c9a84c;
-  --gold2: #e8c97a;
-  --text: #f0ede6;
-  --muted: #888880;
-  --muted2: #555550;
-  --red: #c0392b;
-  --green: #27ae60;
-  --blue: #2980b9;
-  --amber: #d68910;
-  --radius: 10px;
-  --radius-sm: 6px;
+  --bg:#0a0a0a; --surface:#111111; --surface2:#1a1a1a;
+  --border:rgba(245,197,24,0.12); --border2:rgba(245,197,24,0.3);
+  --yellow:#F5C518; --yellow2:#ffd84d;
+  --white:#f2f2f2; --muted:#777; --muted2:#444;
+  --red:#e03030; --green:#28a745; --radius:8px; --radius-sm:4px;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 300; min-height: 100vh; font-size: 15px; }
-
-.toast { position: fixed; bottom: 20px; right: 20px; background: var(--surface2); border: 1px solid var(--gold); color: var(--gold2); padding: 10px 18px; border-radius: var(--radius-sm); font-size: 13px; z-index: 999; opacity: 0; transition: opacity .3s; pointer-events: none; }
-.toast.show { opacity: 1; }
-
-.loading-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 998; flex-direction: column; gap: 12px; }
-.loading-overlay.hide { display: none; }
-.loading-text { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--gold2); }
-.loading-sub { font-size: 12px; color: var(--muted); letter-spacing: 0.1em; }
-.spinner { width: 24px; height: 24px; border: 2px solid var(--border2); border-top-color: var(--gold); border-radius: 50%; animation: spin .7s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 18px 20px 0; position: sticky; top: 0; z-index: 100; }
-.brand { display: flex; align-items: baseline; gap: 10px; margin-bottom: 16px; }
-.brand-name { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--gold2); letter-spacing: 0.04em; }
-.brand-tag { font-size: 11px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
-.nav { display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
-.nav::-webkit-scrollbar { display: none; }
-.nav-btn { background: none; border: none; padding: 10px 18px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: color .2s; letter-spacing: 0.03em; }
-.nav-btn.active { color: var(--gold2); border-bottom-color: var(--gold); }
-.nav-btn:hover:not(.active) { color: var(--text); }
-
-.main { padding: 20px 16px; max-width: 800px; margin: 0 auto; }
-.section-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-@media (max-width: 480px) { .form-grid { grid-template-columns: 1fr; } }
-.field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 5px; letter-spacing: 0.06em; text-transform: uppercase; }
-.field input, .field select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 300; outline: none; transition: border-color .2s; -webkit-appearance: none; }
-.field input:focus, .field select:focus { border-color: var(--gold); }
-.field select option { background: #1f1f1b; }
-.btn-primary { background: var(--gold); color: #0f0f0d; border: none; border-radius: var(--radius-sm); padding: 11px 22px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; letter-spacing: 0.05em; transition: background .2s, opacity .2s; }
-.btn-primary:hover { background: var(--gold2); }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-ghost { background: none; border: 1px solid var(--border2); color: var(--muted); border-radius: var(--radius-sm); padding: 6px 10px; font-size: 13px; cursor: pointer; transition: color .15s, border-color .15s; }
-.btn-ghost:hover { color: var(--red); border-color: var(--red); }
-
-.reserva-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px; display: flex; align-items: center; gap: 14px; transition: border-color .2s; }
-.reserva-card:hover { border-color: var(--border2); }
-.tipo-dot { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
-.dot-pequeno { background: rgba(41,128,185,0.18); color: #5dade2; }
-.dot-medio   { background: rgba(214,137,16,0.18);  color: #f0b429; }
-.dot-grande  { background: rgba(192,57,43,0.18);   color: #e74c3c; }
-.reserva-info { flex: 1; min-width: 0; }
-.reserva-nome { font-size: 14px; font-weight: 500; color: var(--text); }
-.reserva-sub  { font-size: 12px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.reserva-right { text-align: right; flex-shrink: 0; }
-.reserva-valor { font-size: 14px; font-weight: 500; color: var(--gold2); }
-.reserva-hora  { font-size: 11px; color: var(--muted); margin-top: 2px; }
-.empty { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 14px; }
-.empty span { display: block; font-size: 28px; margin-bottom: 8px; }
-
-.cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-.cal-month-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--gold2); }
-.cal-nav-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); border-radius: var(--radius-sm); padding: 6px 14px; cursor: pointer; font-size: 16px; transition: border-color .15s, color .15s; }
-.cal-nav-btn:hover { border-color: var(--gold); color: var(--gold2); }
-.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
-.cal-label { font-size: 10px; text-align: center; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 0; }
-.cal-cell { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 5px; min-height: 60px; cursor: pointer; transition: border-color .15s; }
-@media (max-width: 480px) { .cal-cell { min-height: 48px; } }
-.cal-cell:hover { border-color: var(--border2); }
-.cal-cell.other { opacity: 0.3; }
-.cal-cell.today { border-color: var(--gold); }
-.cal-cell.selected { background: rgba(201,168,76,0.08); border-color: var(--gold2); }
-.cal-num { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
-.cal-dot { font-size: 9px; border-radius: 3px; padding: 1px 4px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
-.dot-p { background: rgba(41,128,185,0.7); }
-.dot-m { background: rgba(214,137,16,0.7); }
-.dot-g { background: rgba(192,57,43,0.7); }
-.cal-detail { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-top: 12px; }
-.cal-detail-title { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: var(--gold2); margin-bottom: 10px; }
-.cal-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
-.cal-row:last-child { border-bottom: none; }
-
-.metrics { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-bottom: 16px; }
-@media (min-width: 600px) { .metrics { grid-template-columns: repeat(4,1fr); } }
-.metric { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
-.metric-label { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
-.metric-val { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--gold2); }
-.metric-sub { font-size: 11px; color: var(--muted2); margin-top: 2px; }
-.chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
-.chart-card-title { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
-.legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; font-size: 11px; color: var(--muted); }
-.legend span { display: flex; align-items: center; gap: 5px; }
-.legend-sq { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
-
-.gasto-form { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
-.gasto-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
-.gasto-row:last-child { border-bottom: none; }
-.gasto-cat { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; background: rgba(201,168,76,0.12); color: var(--gold); border-radius: 4px; padding: 3px 8px; flex-shrink: 0; }
-.gasto-desc { flex: 1; font-size: 13px; color: var(--text); }
-.gasto-data { font-size: 11px; color: var(--muted); flex-shrink: 0; }
-.gasto-val { font-size: 14px; font-weight: 500; color: #e74c3c; flex-shrink: 0; }
-.total-line { text-align: right; font-size: 13px; color: var(--muted); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
-.total-line strong { color: var(--text); font-weight: 500; }
-
-.divider { height: 1px; background: var(--border); margin: 20px 0; }
-.view { display: none; }
-.view.active { display: block; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;font-weight:300;min-height:100vh}
+.loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:14px}
+.loading-overlay.hide{display:none}
+.loading-sub{font-size:11px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase}
+.spinner{width:22px;height:22px;border:2px solid rgba(245,197,24,.2);border-top-color:var(--yellow);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--surface2);border:1px solid var(--yellow);color:var(--yellow2);padding:10px 18px;border-radius:var(--radius-sm);font-size:13px;z-index:998;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+.stripe{width:100%;height:5px;background:repeating-linear-gradient(90deg,var(--yellow) 0,var(--yellow) 18px,transparent 18px,transparent 24px);opacity:.8}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;position:sticky;top:0;z-index:100;display:flex;align-items:stretch}
+.brand{display:flex;align-items:center;gap:12px;padding:12px 20px 12px 0;border-right:1px solid var(--border);flex-shrink:0}
+.brand-texts{display:flex;flex-direction:column}
+.brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--yellow);letter-spacing:.1em;line-height:1}
+.brand-tag{font-size:11px;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;margin-top:2px}
+.nav{display:flex;overflow-x:auto;scrollbar-width:none;flex:1}
+.nav::-webkit-scrollbar{display:none}
+.nav-btn{background:none;border:none;padding:0 18px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s;letter-spacing:.08em;text-transform:uppercase}
+.nav-btn.active{color:var(--yellow);border-bottom-color:var(--yellow)}
+.nav-btn:hover:not(.active){color:var(--white)}
+.main{padding:22px 16px;max-width:820px;margin:0 auto}
+.sec{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec::after{content:'';flex:1;height:1px;background:var(--border)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+@media(max-width:500px){.form-grid{grid-template-columns:1fr}}
+.field label{display:block;font-size:10px;color:var(--muted);margin-bottom:5px;letter-spacing:.1em;text-transform:uppercase}
+.field input,.field select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;color:var(--white);font-family:'Barlow',sans-serif;font-size:14px;font-weight:300;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.field input:focus,.field select:focus{border-color:var(--yellow)}
+.field select option{background:#1a1a1a}
+.btn-primary{background:var(--yellow);color:#0a0a0a;border:none;border-radius:var(--radius-sm);padding:11px 24px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:background .2s,opacity .2s}
+.btn-primary:hover{background:var(--yellow2)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:none;border:1px solid var(--border2);color:var(--muted);border-radius:var(--radius-sm);padding:5px 10px;font-size:12px;cursor:pointer;transition:color .15s,border-color .15s}
+.btn-ghost:hover{color:var(--red);border-color:var(--red)}
+.divider{height:1px;background:var(--border);margin:22px 0}
+.rcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;transition:border-color .2s}
+.rcard:hover{border-color:var(--border2)}
+.tbadge{width:36px;height:36px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;border:1px solid}
+.bp{background:rgba(41,128,185,.12);border-color:rgba(41,128,185,.3);color:#5dade2}
+.bm{background:rgba(245,197,24,.1);border-color:rgba(245,197,24,.25);color:var(--yellow)}
+.bg2{background:rgba(224,48,48,.12);border-color:rgba(224,48,48,.3);color:#e74c3c}
+.ri{flex:1;min-width:0}
+.rn{font-size:14px;font-weight:600;color:var(--white)}
+.rs{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rr{text-align:right;flex-shrink:0}
+.rv{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--yellow);letter-spacing:.05em}
+.rh{font-size:11px;color:var(--muted);margin-top:2px}
+.empty{text-align:center;padding:48px 20px;color:var(--muted);font-size:14px}
+.empty .ic{font-size:32px;display:block;margin-bottom:8px;opacity:.4}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.cal-title{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--yellow);letter-spacing:.06em}
+.cal-nb{background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:var(--radius-sm);padding:6px 16px;cursor:pointer;font-size:16px;transition:border-color .15s,color .15s}
+.cal-nb:hover{border-color:var(--yellow);color:var(--yellow)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-lbl{font-size:10px;text-align:center;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;padding:6px 0}
+.cal-cell{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 5px;min-height:62px;cursor:pointer;transition:border-color .15s}
+@media(max-width:480px){.cal-cell{min-height:50px}}
+.cal-cell:hover{border-color:var(--border2)}
+.cal-cell.other{opacity:.28}
+.cal-cell.today{border-color:rgba(245,197,24,.5)}
+.cal-cell.selected{background:rgba(245,197,24,.07);border-color:var(--yellow)}
+.cal-num{font-size:11px;font-weight:600;color:var(--white);margin-bottom:3px}
+.cal-dot{font-size:9px;border-radius:2px;padding:1px 3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#0a0a0a;font-weight:500}
+.dp{background:#5dade2}.dm{background:var(--yellow)}.dg{background:#e74c3c}
+.cal-det{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:12px}
+.cal-det-title{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--yellow);letter-spacing:.06em;margin-bottom:10px}
+.cal-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.cal-row:last-child{border-bottom:none}
+.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+@media(min-width:600px){.metrics{grid-template-columns:repeat(4,1fr)}}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.mlbl{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.mval{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--yellow);letter-spacing:.04em}
+.msub{font-size:11px;color:var(--muted2);margin-top:2px}
+.ccard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.ctitle{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;font-size:11px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:5px}
+.lsq{width:8px;height:8px;border-radius:2px;display:inline-block}
+.grow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.grow:last-child{border-bottom:none}
+.gcat{font-size:9px;letter-spacing:.1em;text-transform:uppercase;background:rgba(245,197,24,.1);color:var(--yellow);border:1px solid rgba(245,197,24,.2);border-radius:3px;padding:3px 8px;flex-shrink:0;font-weight:500}
+.gdesc{flex:1;font-size:13px;color:var(--white);min-width:80px}
+.gdata{font-size:11px;color:var(--muted);flex-shrink:0}
+.gval{font-family:'Bebas Neue',sans-serif;font-size:16px;color:#e74c3c;flex-shrink:0;letter-spacing:.03em}
+.total-line{text-align:right;font-size:13px;color:var(--muted);margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.total-line strong{color:var(--white);font-weight:600}
+.view{display:none}.view.active{display:block}
 </style>
 </head>
 <body>
 
 <div class="loading-overlay" id="loading">
   <div class="spinner"></div>
-  <div class="loading-text">Aesthetic Rabello</div>
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--yellow);letter-spacing:.1em">AESTHETICS RABELLO</div>
   <div class="loading-sub">Conectando ao banco de dados...</div>
 </div>
 
 <div class="toast" id="toast"></div>
 
+<div class="stripe"></div>
 <div class="header">
   <div class="brand">
-    <span class="brand-name">Aesthetic Rabello</span>
-    <span class="brand-tag">Gestão</span>
+    <div class="brand-texts">
+      <div class="brand-name">AESTHETICS RABELLO</div>
+      <div class="brand-tag">Sistema de Gestão</div>
+    </div>
   </div>
   <div class="nav">
     <button class="nav-btn active" onclick="switchView('reservas',this)">Reservas</button>
@@ -150,9 +131,8 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
 
 <div class="main">
 
-  <!-- RESERVAS -->
   <div id="view-reservas" class="view active">
-    <div class="section-label" style="margin-top:4px">Nova reserva</div>
+    <div class="sec" style="margin-top:4px">Nova reserva</div>
     <div class="form-grid">
       <div class="field"><label>Nome do cliente</label><input type="text" id="r-nome" placeholder="Ex: João Silva"></div>
       <div class="field"><label>Telefone</label><input type="tel" id="r-tel" placeholder="(11) 99999-9999"></div>
@@ -179,50 +159,35 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
     </div>
     <button class="btn-primary" id="btn-add-reserva" onclick="addReserva()">+ Adicionar reserva</button>
     <div class="divider"></div>
-    <div class="section-label">Reservas cadastradas</div>
+    <div class="sec">Reservas cadastradas</div>
     <div id="lista-reservas"><div class="empty"><div class="spinner" style="margin:0 auto"></div></div></div>
   </div>
 
-  <!-- CALENDÁRIO -->
   <div id="view-calendario" class="view">
     <div class="cal-header">
-      <button class="cal-nav-btn" onclick="calNav(-1)">&#8249;</button>
-      <span class="cal-month-title" id="cal-title"></span>
-      <button class="cal-nav-btn" onclick="calNav(1)">&#8250;</button>
+      <button class="cal-nb" onclick="calNav(-1)">&#8249;</button>
+      <span class="cal-title" id="cal-title"></span>
+      <button class="cal-nb" onclick="calNav(1)">&#8250;</button>
     </div>
     <div class="cal-grid" id="cal-grid"></div>
-    <div id="cal-detail"></div>
+    <div id="cal-det"></div>
   </div>
 
-  <!-- DASHBOARD -->
   <div id="view-dashboard" class="view">
-    <div class="section-label" style="margin-top:4px">Resumo do mês</div>
+    <div class="sec" style="margin-top:4px">Resumo do mês</div>
     <div class="metrics">
-      <div class="metric"><div class="metric-label">Receita</div><div class="metric-val" id="m-receita">R$ 0</div><div class="metric-sub">este mês</div></div>
-      <div class="metric"><div class="metric-label">Reservas</div><div class="metric-val" id="m-qtd">0</div><div class="metric-sub">atendimentos</div></div>
-      <div class="metric"><div class="metric-label">Gastos</div><div class="metric-val" id="m-gastos">R$ 0</div><div class="metric-sub">despesas</div></div>
-      <div class="metric"><div class="metric-label">Lucro</div><div class="metric-val" id="m-lucro">R$ 0</div><div class="metric-sub">líquido</div></div>
+      <div class="metric"><div class="mlbl">Receita</div><div class="mval" id="m-receita">R$ 0</div><div class="msub">este mês</div></div>
+      <div class="metric"><div class="mlbl">Reservas</div><div class="mval" id="m-qtd">0</div><div class="msub">atendimentos</div></div>
+      <div class="metric"><div class="mlbl">Gastos</div><div class="mval" id="m-gastos">R$ 0</div><div class="msub">despesas</div></div>
+      <div class="metric"><div class="mlbl">Lucro</div><div class="mval" id="m-lucro">R$ 0</div><div class="msub">líquido</div></div>
     </div>
-    <div class="chart-card">
-      <div class="chart-card-title">Receita por tipo de carro</div>
-      <div class="legend" id="leg-tipo"></div>
-      <div style="position:relative;height:200px"><canvas id="ch-tipo" role="img" aria-label="Receita por tipo de carro">Gráfico de receita por tamanho do veículo.</canvas></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-card-title">Receita vs Gastos</div>
-      <div class="legend" id="leg-rg"></div>
-      <div style="position:relative;height:200px"><canvas id="ch-rg" role="img" aria-label="Receita vs Gastos">Comparativo de receita e gastos do mês.</canvas></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-card-title">Serviços realizados</div>
-      <div class="legend" id="leg-serv"></div>
-      <div style="position:relative;height:180px"><canvas id="ch-serv" role="img" aria-label="Serviços realizados">Quantidade por tipo de serviço.</canvas></div>
-    </div>
+    <div class="ccard"><div class="ctitle">Receita por tipo de carro</div><div class="legend" id="leg-tipo"></div><div style="position:relative;height:200px"><canvas id="ch-tipo"></canvas></div></div>
+    <div class="ccard"><div class="ctitle">Receita vs Gastos</div><div class="legend" id="leg-rg"></div><div style="position:relative;height:200px"><canvas id="ch-rg"></canvas></div></div>
+    <div class="ccard"><div class="ctitle">Serviços realizados</div><div class="legend" id="leg-serv"></div><div style="position:relative;height:180px"><canvas id="ch-serv"></canvas></div></div>
   </div>
 
-  <!-- GASTOS -->
   <div id="view-gastos" class="view">
-    <div class="section-label" style="margin-top:4px">Lançar despesa</div>
+    <div class="sec" style="margin-top:4px">Lançar despesa</div>
     <div class="form-grid">
       <div class="field"><label>Descrição</label><input type="text" id="g-desc" placeholder="Ex: Produtos de limpeza"></div>
       <div class="field"><label>Categoria</label>
@@ -240,7 +205,7 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
     </div>
     <button class="btn-primary" id="btn-add-gasto" onclick="addGasto()">+ Lançar gasto</button>
     <div class="divider"></div>
-    <div class="section-label">Despesas lançadas</div>
+    <div class="sec">Despesas lançadas</div>
     <div id="lista-gastos"></div>
     <div id="total-gastos" class="total-line"></div>
   </div>
@@ -249,10 +214,7 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-import {
-  getFirestore, collection, addDoc, deleteDoc, doc,
-  onSnapshot, query, orderBy, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 import { Chart, registerables } from "https://cdn.jsdelivr.net/npm/chart.js@4.4.1/+esm";
 Chart.register(...registerables);
 
@@ -267,12 +229,9 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
+const db = getFirestore(app);
 
-let reservas = [];
-let gastos   = [];
-let calDate  = new Date();
-let selDay   = null;
+let reservas = [], gastos = [], calDate = new Date(), selDay = null;
 let chTipo = null, chRG = null, chServ = null;
 const today = new Date();
 
@@ -282,45 +241,42 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// Datas padrão
 document.getElementById('r-data').valueAsDate = today;
 document.getElementById('r-hora').value = '09:00';
 document.getElementById('g-data').valueAsDate = today;
 
-// ── Listeners em tempo real ──
 const qRes = query(collection(db,'reservas'), orderBy('data'), orderBy('hora'));
 onSnapshot(qRes, snap => {
   reservas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
   renderLista();
   document.getElementById('loading').classList.add('hide');
+}, err => {
+  console.error(err);
+  document.getElementById('loading').classList.add('hide');
 });
 
 const qGas = query(collection(db,'gastos'), orderBy('data','desc'));
-onSnapshot(qGas, snap => {
-  gastos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-});
+onSnapshot(qGas, snap => { gastos = snap.docs.map(d => ({ id: d.id, ...d.data() })); });
 
-// ── NAV ──
 window.switchView = function(v, btn) {
   document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
   document.getElementById('view-' + v).classList.add('active');
   btn.classList.add('active');
   if (v === 'calendario') renderCal();
-  if (v === 'dashboard')  renderDash();
-  if (v === 'gastos')     renderGastos();
-}
+  if (v === 'dashboard') renderDash();
+  if (v === 'gastos') renderGastos();
+};
 
-// ── RESERVAS ──
 window.addReserva = async function() {
-  const nome   = document.getElementById('r-nome').value.trim();
-  const tel    = document.getElementById('r-tel').value.trim();
+  const nome = document.getElementById('r-nome').value.trim();
+  const tel = document.getElementById('r-tel').value.trim();
   const modelo = document.getElementById('r-modelo').value.trim();
-  const tipo   = document.getElementById('r-tipo').value;
-  const data   = document.getElementById('r-data').value;
-  const hora   = document.getElementById('r-hora').value;
-  const servico= document.getElementById('r-servico').value;
-  const valor  = parseFloat(document.getElementById('r-valor').value) || 0;
+  const tipo = document.getElementById('r-tipo').value;
+  const data = document.getElementById('r-data').value;
+  const hora = document.getElementById('r-hora').value;
+  const servico = document.getElementById('r-servico').value;
+  const valor = parseFloat(document.getElementById('r-valor').value) || 0;
   if (!nome || !tipo || !data || !hora) { alert('Preencha: nome, tipo, data e horário.'); return; }
   const btn = document.getElementById('btn-add-reserva');
   btn.disabled = true; btn.textContent = 'Salvando...';
@@ -328,146 +284,147 @@ window.addReserva = async function() {
     await addDoc(collection(db,'reservas'), { nome, tel, modelo, tipo, data, hora, servico, valor, criadoEm: serverTimestamp() });
     ['r-nome','r-tel','r-modelo','r-valor'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('r-tipo').value = '';
-    showToast('✓ Reserva adicionada!');
+    showToast('Reserva adicionada!');
   } catch(e) { alert('Erro ao salvar: ' + e.message); }
   btn.disabled = false; btn.textContent = '+ Adicionar reserva';
-}
+};
 
 window.delReserva = async function(id) {
   if (!confirm('Remover esta reserva?')) return;
   try { await deleteDoc(doc(db,'reservas',id)); showToast('Reserva removida.'); }
   catch(e) { alert('Erro: ' + e.message); }
-}
+};
 
 function renderLista() {
   const el = document.getElementById('lista-reservas');
-  if (!reservas.length) { el.innerHTML = '<div class="empty"><span>🚗</span>Nenhuma reserva ainda.</div>'; return; }
-  const tipoLabel = { pequeno:'Pequeno', medio:'Médio', grande:'Grande' };
+  if (!reservas.length) { el.innerHTML = '<div class="empty"><span class="ic">🚗</span>Nenhuma reserva ainda.</div>'; return; }
+  const tl = { pequeno:'Pequeno', medio:'Médio', grande:'Grande' };
   el.innerHTML = reservas.map(r => {
     const d = r.data ? r.data.split('-').reverse().join('/') : '';
-    return `<div class="reserva-card">
-      <div class="tipo-dot dot-${r.tipo}">🚗</div>
-      <div class="reserva-info">
-        <div class="reserva-nome">${r.nome}</div>
-        <div class="reserva-sub">${r.modelo||'Modelo n/i'} · ${tipoLabel[r.tipo]||r.tipo} · ${r.servico}${r.tel?' · '+r.tel:''}</div>
+    const bc = r.tipo === 'pequeno' ? 'bp' : r.tipo === 'medio' ? 'bm' : 'bg2';
+    return `<div class="rcard">
+      <div class="tbadge ${bc}">🚗</div>
+      <div class="ri">
+        <div class="rn">${r.nome}</div>
+        <div class="rs">${r.modelo||'Modelo n/i'} · ${tl[r.tipo]||r.tipo} · ${r.servico}${r.tel?' · '+r.tel:''}</div>
       </div>
-      <div class="reserva-right">
-        <div class="reserva-valor">R$ ${Number(r.valor).toFixed(2)}</div>
-        <div class="reserva-hora">${d} ${r.hora}</div>
+      <div class="rr">
+        <div class="rv">R$ ${Number(r.valor).toFixed(2)}</div>
+        <div class="rh">${d} ${r.hora}</div>
       </div>
-      <button class="btn-ghost" onclick="delReserva('${r.id}')" title="Remover">✕</button>
+      <button class="btn-ghost" onclick="delReserva('${r.id}')">✕</button>
     </div>`;
   }).join('');
 }
 
-// ── CALENDÁRIO ──
 const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const DIAS  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const DIAS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 
 window.calNav = function(dir) {
   calDate = new Date(calDate.getFullYear(), calDate.getMonth() + dir, 1);
   renderCal();
-}
+};
 
 function renderCal() {
   const y = calDate.getFullYear(), m = calDate.getMonth();
   document.getElementById('cal-title').textContent = MESES[m] + ' ' + y;
   const first = new Date(y,m,1).getDay();
   const total = new Date(y,m+1,0).getDate();
-  const prevTotal = new Date(y,m,0).getDate();
-  let html = DIAS.map(d => <div class="cal-label">${d}</div>).join('');
-  for (let i=0;i<first;i++) html += <div class="cal-cell other"><div class="cal-num">${prevTotal-first+i+1}</div></div>;
+  const prev = new Date(y,m,0).getDate();
+  let html = DIAS.map(d => `<div class="cal-lbl">${d}</div>`).join('');
+  for (let i=0;i<first;i++) html += `<div class="cal-cell other"><div class="cal-num">${prev-first+i+1}</div></div>`;
   for (let d=1;d<=total;d++) {
-    const ds = ${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')};
-    const dayRes = reservas.filter(r=>r.data===ds);
-    const isToday = today.getFullYear()===y&&today.getMonth()===m&&today.getDate()===d;
-    const isSel   = selDay===ds;
-    const dots = dayRes.slice(0,3).map(r=><div class="cal-dot dot-${r.tipo[0]}">${r.hora} ${r.nome.split(' ')[0]}</div>).join('');
-    html += <div class="cal-cell${isToday?' today':''}${isSel?' selected':''}" onclick="selectDay('${ds}')"><div class="cal-num">${d}</div>${dots}</div>;
+    const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dr = reservas.filter(r => r.data===ds);
+    const isT = today.getFullYear()===y && today.getMonth()===m && today.getDate()===d;
+    const isS = selDay===ds;
+    const dc = r => r.tipo==='pequeno'?'dp':r.tipo==='medio'?'dm':'dg';
+    const dots = dr.slice(0,3).map(r => `<div class="cal-dot ${dc(r)}">${r.hora} ${r.nome.split(' ')[0]}</div>`).join('');
+    html += `<div class="cal-cell${isT?' today':''}${isS?' selected':''}" onclick="selectDay('${ds}')"><div class="cal-num">${d}</div>${dots}</div>`;
   }
-  const rem = 42-first-total;
-  for (let d=1;d<=rem;d++) html += <div class="cal-cell other"><div class="cal-num">${d}</div></div>;
+  for (let d=1;d<=42-first-total;d++) html += `<div class="cal-cell other"><div class="cal-num">${d}</div></div>`;
   document.getElementById('cal-grid').innerHTML = html;
   if (selDay) showDetail(selDay);
-  else document.getElementById('cal-detail').innerHTML = '';
+  else document.getElementById('cal-det').innerHTML = '';
 }
 
-window.selectDay = function(ds) { selDay = ds; renderCal(); }
+window.selectDay = function(ds) { selDay = ds; renderCal(); };
 
 function showDetail(ds) {
-  const dayRes = reservas.filter(r=>r.data===ds);
+  const dr = reservas.filter(r => r.data===ds);
   const d = ds.split('-').reverse().join('/');
-  const el = document.getElementById('cal-detail');
-  if (!dayRes.length) { el.innerHTML = <div class="cal-detail"><div class="cal-detail-title">${d}</div><p style="color:var(--muted);font-size:13px">Sem reservas neste dia.</p></div>; return; }
-  const tipoLabel = {pequeno:'Pequeno',medio:'Médio',grande:'Grande'};
-  el.innerHTML = `<div class="cal-detail">
-    <div class="cal-detail-title">${d} — ${dayRes.length} reserva${dayRes.length>1?'s':''}</div>
-    ${dayRes.map(r=>`<div class="cal-row">
-      <div class="tipo-dot dot-${r.tipo}" style="width:28px;height:28px;font-size:13px">🚗</div>
-      <div style="flex:1"><div style="font-size:13px;font-weight:500">${r.nome}</div>
-      <div style="font-size:11px;color:var(--muted)">${r.modelo||''} · ${tipoLabel[r.tipo]||r.tipo} · ${r.servico}</div></div>
+  const el = document.getElementById('cal-det');
+  if (!dr.length) {
+    el.innerHTML = `<div class="cal-det"><div class="cal-det-title">${d}</div><p style="color:var(--muted);font-size:13px">Sem reservas neste dia.</p></div>`;
+    return;
+  }
+  const tl = {pequeno:'Pequeno',medio:'Médio',grande:'Grande'};
+  el.innerHTML = `<div class="cal-det">
+    <div class="cal-det-title">${d} — ${dr.length} reserva${dr.length>1?'s':''}</div>
+    ${dr.map(r => `<div class="cal-row">
+      <div class="tbadge ${r.tipo==='pequeno'?'bp':r.tipo==='medio'?'bm':'bg2'}" style="width:28px;height:28px;font-size:13px">🚗</div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600">${r.nome}</div>
+      <div style="font-size:11px;color:var(--muted)">${r.modelo||''} · ${tl[r.tipo]||r.tipo} · ${r.servico}</div></div>
       <div style="font-size:12px;color:var(--muted);margin-right:8px">${r.hora}</div>
-      <div style="font-size:13px;font-weight:500;color:var(--gold2)">R$ ${Number(r.valor).toFixed(2)}</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--yellow)">R$ ${Number(r.valor).toFixed(2)}</div>
     </div>`).join('')}
   </div>`;
 }
 
-// ── DASHBOARD ──
 function renderDash() {
   const y = today.getFullYear(), m = today.getMonth();
-  const mRes = reservas.filter(r=>{ const d=new Date(r.data); return d.getFullYear()===y&&d.getMonth()===m; });
-  const mGas = gastos.filter(g=>{ const d=new Date(g.data); return d.getFullYear()===y&&d.getMonth()===m; });
-  const rec  = mRes.reduce((s,r)=>s+Number(r.valor),0);
-  const gas  = mGas.reduce((s,g)=>s+Number(g.valor),0);
-  const luc  = rec-gas;
+  const mR = reservas.filter(r => { const d=new Date(r.data); return d.getFullYear()===y&&d.getMonth()===m; });
+  const mG = gastos.filter(g => { const d=new Date(g.data); return d.getFullYear()===y&&d.getMonth()===m; });
+  const rec = mR.reduce((s,r) => s+Number(r.valor),0);
+  const gas = mG.reduce((s,g) => s+Number(g.valor),0);
+  const luc = rec-gas;
   document.getElementById('m-receita').textContent = 'R$ '+rec.toFixed(2);
-  document.getElementById('m-qtd').textContent = mRes.length;
+  document.getElementById('m-qtd').textContent = mR.length;
   document.getElementById('m-gastos').textContent = 'R$ '+gas.toFixed(2);
-  const elL = document.getElementById('m-lucro');
-  elL.textContent = 'R$ '+luc.toFixed(2);
-  elL.style.color = luc>=0?'#27ae60':'#e74c3c';
+  const el = document.getElementById('m-lucro');
+  el.textContent = 'R$ '+luc.toFixed(2);
+  el.style.color = luc>=0 ? '#28a745' : '#e74c3c';
 
-  const tipoRec = {pequeno:0,medio:0,grande:0};
-  mRes.forEach(r=>{ if(tipoRec[r.tipo]!==undefined) tipoRec[r.tipo]+=Number(r.valor); });
+  const tr = {pequeno:0,medio:0,grande:0};
+  mR.forEach(r => { if(tr[r.tipo]!==undefined) tr[r.tipo]+=Number(r.valor); });
   document.getElementById('leg-tipo').innerHTML = [
-    {k:'pequeno',l:'Pequeno',c:'#2980b9'},
-    {k:'medio',  l:'Médio',  c:'#d68910'},
-    {k:'grande', l:'Grande', c:'#c0392b'}
-  ].map(x=><span><span class="legend-sq" style="background:${x.c}"></span>${x.l} R$ ${tipoRec[x.k].toFixed(0)}</span>).join('');
+    {k:'pequeno',l:'Pequeno',c:'#5dade2'},
+    {k:'medio',l:'Médio',c:'#F5C518'},
+    {k:'grande',l:'Grande',c:'#e74c3c'}
+  ].map(x => `<span><span class="lsq" style="background:${x.c}"></span>${x.l} R$ ${tr[x.k].toFixed(0)}</span>`).join('');
   if(chTipo) chTipo.destroy();
-  chTipo = new Chart(document.getElementById('ch-tipo'),{
+  chTipo = new Chart(document.getElementById('ch-tipo'), {
     type:'doughnut',
-    data:{labels:['Pequeno','Médio','Grande'],datasets:[{data:[tipoRec.pequeno,tipoRec.medio,tipoRec.grande],backgroundColor:['#2980b9','#d68910','#c0392b'],borderWidth:0}]},
+    data:{labels:['Pequeno','Médio','Grande'],datasets:[{data:[tr.pequeno,tr.medio,tr.grande],backgroundColor:['#5dade2','#F5C518','#e74c3c'],borderWidth:0}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'60%'}
   });
 
-  document.getElementById('leg-rg').innerHTML = <span><span class="legend-sq" style="background:#c9a84c"></span>Receita R$ ${rec.toFixed(0)}</span><span><span class="legend-sq" style="background:#c0392b"></span>Gastos R$ ${gas.toFixed(0)}</span>;
+  document.getElementById('leg-rg').innerHTML = `<span><span class="lsq" style="background:#F5C518"></span>Receita R$ ${rec.toFixed(0)}</span><span><span class="lsq" style="background:#e74c3c"></span>Gastos R$ ${gas.toFixed(0)}</span>`;
   if(chRG) chRG.destroy();
-  chRG = new Chart(document.getElementById('ch-rg'),{
+  chRG = new Chart(document.getElementById('ch-rg'), {
     type:'bar',
-    data:{labels:['Este mês'],datasets:[{label:'Receita',data:[rec],backgroundColor:'#c9a84c'},{label:'Gastos',data:[gas],backgroundColor:'#c0392b'}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#888880',callback:v=>'R$'+v}},x:{grid:{display:false},ticks:{color:'#888880'}}}}
+    data:{labels:['Este mês'],datasets:[{label:'Receita',data:[rec],backgroundColor:'#F5C518'},{label:'Gastos',data:[gas],backgroundColor:'#e74c3c'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#777',callback:v=>'R$'+v}},x:{grid:{display:false},ticks:{color:'#777'}}}}
   });
 
-  const srvCount={};
-  mRes.forEach(r=>{ srvCount[r.servico]=(srvCount[r.servico]||0)+1; });
-  const srvLabels=Object.keys(srvCount);
-  const srvColors=['#c9a84c','#27ae60','#2980b9','#8e44ad'];
-  document.getElementById('leg-serv').innerHTML = srvLabels.map((l,i)=><span><span class="legend-sq" style="background:${srvColors[i%4]}"></span>${l} (${srvCount[l]})</span>).join('');
+  const sc = {};
+  mR.forEach(r => { sc[r.servico]=(sc[r.servico]||0)+1; });
+  const sl = Object.keys(sc);
+  const scols = ['#F5C518','#28a745','#5dade2','#8e44ad'];
+  document.getElementById('leg-serv').innerHTML = sl.map((l,i) => `<span><span class="lsq" style="background:${scols[i%4]}"></span>${l} (${sc[l]})</span>`).join('');
   if(chServ) chServ.destroy();
-  chServ = new Chart(document.getElementById('ch-serv'),{
+  chServ = new Chart(document.getElementById('ch-serv'), {
     type:'bar',
-    data:{labels:srvLabels.length?srvLabels:['—'],datasets:[{data:srvLabels.length?srvLabels.map(l=>srvCount[l]):[0],backgroundColor:srvColors,borderWidth:0}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#888880',stepSize:1}},x:{grid:{display:false},ticks:{color:'#888880'}}}}
+    data:{labels:sl.length?sl:['—'],datasets:[{data:sl.length?sl.map(l=>sc[l]):[0],backgroundColor:scols,borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#777',stepSize:1}},x:{grid:{display:false},ticks:{color:'#777'}}}}
   });
 }
 
-// ── GASTOS ──
 window.addGasto = async function() {
-  const desc  = document.getElementById('g-desc').value.trim();
-  const cat   = document.getElementById('g-cat').value;
+  const desc = document.getElementById('g-desc').value.trim();
+  const cat = document.getElementById('g-cat').value;
   const valor = parseFloat(document.getElementById('g-valor').value)||0;
-  const data  = document.getElementById('g-data').value;
+  const data = document.getElementById('g-data').value;
   if (!desc||!data||!valor) { alert('Preencha descrição, valor e data.'); return; }
   const btn = document.getElementById('btn-add-gasto');
   btn.disabled = true; btn.textContent = 'Salvando...';
@@ -475,38 +432,37 @@ window.addGasto = async function() {
     await addDoc(collection(db,'gastos'), { desc, cat, valor, data, criadoEm: serverTimestamp() });
     document.getElementById('g-desc').value='';
     document.getElementById('g-valor').value='';
-    showToast('✓ Gasto lançado!');
+    showToast('Gasto lançado!');
   } catch(e) { alert('Erro ao salvar: ' + e.message); }
   btn.disabled = false; btn.textContent = '+ Lançar gasto';
-}
+};
 
 window.delGasto = async function(id) {
   if (!confirm('Remover este gasto?')) return;
   try { await deleteDoc(doc(db,'gastos',id)); showToast('Gasto removido.'); }
   catch(e) { alert('Erro: ' + e.message); }
-}
+};
 
 function renderGastos() {
   const el = document.getElementById('lista-gastos');
-  if (!gastos.length) { el.innerHTML='<div class="empty"><span>💸</span>Nenhum gasto lançado.</div>'; document.getElementById('total-gastos').innerHTML=''; return; }
-  el.innerHTML = gastos.map(g=>{
+  if (!gastos.length) { el.innerHTML='<div class="empty"><span class="ic">💸</span>Nenhum gasto lançado.</div>'; document.getElementById('total-gastos').innerHTML=''; return; }
+  el.innerHTML = gastos.map(g => {
     const d = g.data?g.data.split('-').reverse().join('/'):'';
-    return `<div class="gasto-row">
-      <span class="gasto-cat">${g.cat}</span>
-      <span class="gasto-desc">${g.desc}</span>
-      <span class="gasto-data">${d}</span>
-      <span class="gasto-val">− R$ ${Number(g.valor).toFixed(2)}</span>
-      <button class="btn-ghost" onclick="delGasto('${g.id}')" title="Remover">✕</button>
+    return `<div class="grow">
+      <span class="gcat">${g.cat}</span>
+      <span class="gdesc">${g.desc}</span>
+      <span class="gdata">${d}</span>
+      <span class="gval">− R$ ${Number(g.valor).toFixed(2)}</span>
+      <button class="btn-ghost" onclick="delGasto('${g.id}')">✕</button>
     </div>`;
   }).join('');
-  const total = gastos.reduce((s,g)=>s+Number(g.valor),0);
-  document.getElementById('total-gastos').innerHTML = Total de gastos: <strong>R$ ${total.toFixed(2)}</strong>;
+  const total = gastos.reduce((s,g) => s+Number(g.valor),0);
+  document.getElementById('total-gastos').innerHTML = `Total de gastos: <strong>R$ ${total.toFixed(2)}</strong>`;
 }
 
-// expõe renderDash e renderGastos para o switchView
-window.renderDash  = renderDash;
+window.renderDash = renderDash;
 window.renderGastos = renderGastos;
-window.renderCal   = renderCal;
+window.renderCal = renderCal;
 </script>
 </body>
 </html>
