@@ -140,6 +140,7 @@ body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;fon
 .gdesc{flex:1;font-size:13px;color:var(--white);min-width:80px}
 .gdata{font-size:11px;color:var(--muted);flex-shrink:0}
 .gval{font-family:'Bebas Neue',sans-serif;font-size:16px;color:#e74c3c;flex-shrink:0;letter-spacing:.03em}
+.gqtd{font-size:10px;color:var(--muted);margin-left:6px;background:var(--surface2);border-radius:3px;padding:1px 6px;border:1px solid var(--border)}
 .total-line{text-align:right;font-size:13px;color:var(--muted);margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
 .total-line strong{color:var(--white);font-weight:600}
 
@@ -356,7 +357,8 @@ body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;fon
           <option value="Outros">Outros</option>
         </select>
       </div>
-      <div class="field"><label>Valor (R$)</label><input type="number" id="g-valor" placeholder="Ex: 150" min="0" step="0.01"></div>
+      <div class="field"><label>Valor unitário (R$)</label><input type="number" id="g-valor" placeholder="Ex: 150" min="0" step="0.01"></div>
+      <div class="field"><label>Quantidade</label><input type="number" id="g-qtd" placeholder="Ex: 3" min="1" step="1" value="1"></div>
       <div class="field"><label>Data</label><input type="date" id="g-data"></div>
     </div>
     <button class="btn-primary" id="btn-add-gasto" onclick="addGasto()">+ Lançar gasto</button>
@@ -689,7 +691,7 @@ function renderDash() {
   const mR = reservas.filter(r => r.pago && (() => { const d=new Date(r.data); return d.getFullYear()===y&&d.getMonth()===m; })());
   const mG = gastos.filter(g => { const d=new Date(g.data); return d.getFullYear()===y&&d.getMonth()===m; });
   const rec = mR.reduce((s,r) => s+Number(r.valor),0);
-  const gas = mG.reduce((s,g) => s+Number(g.valor),0);
+  const gas = mG.reduce((s,g) => s+(g.total||Number(g.valor)),0);
   const luc = rec-gas;
   document.getElementById('m-receita').textContent = 'R$ '+rec.toFixed(2);
   document.getElementById('m-qtd').textContent = mR.length;
@@ -732,13 +734,18 @@ function renderDash() {
 // GASTOS
 window.addGasto = async function() {
   const desc=document.getElementById('g-desc').value.trim(), cat=document.getElementById('g-cat').value;
-  const valor=parseFloat(document.getElementById('g-valor').value)||0, data=document.getElementById('g-data').value;
+  const valor=parseFloat(document.getElementById('g-valor').value)||0;
+  const qtd=parseInt(document.getElementById('g-qtd').value)||1;
+  const data=document.getElementById('g-data').value;
   if (!desc||!data||!valor) { alert('Preencha descrição, valor e data.'); return; }
+  const total = valor * qtd;
   const btn=document.getElementById('btn-add-gasto');
   btn.disabled=true; btn.textContent='Salvando...';
   try {
-    await addDoc(collection(db,'gastos'),{desc,cat,valor,data,criadoEm:serverTimestamp()});
-    document.getElementById('g-desc').value=''; document.getElementById('g-valor').value='';
+    await addDoc(collection(db,'gastos'),{desc,cat,valor,qtd,total,data,criadoEm:serverTimestamp()});
+    document.getElementById('g-desc').value='';
+    document.getElementById('g-valor').value='';
+    document.getElementById('g-qtd').value='1';
     showToast('Gasto lançado!');
   } catch(e) { alert('Erro: '+e.message); }
   btn.disabled=false; btn.textContent='+ Lançar gasto';
@@ -753,9 +760,19 @@ function renderGastos() {
   if (!gastos.length) { el.innerHTML='<div class="empty"><span class="ic">💸</span>Nenhum gasto lançado.</div>'; document.getElementById('total-gastos').innerHTML=''; return; }
   el.innerHTML=gastos.map(g => {
     const d=g.data?g.data.split('-').reverse().join('/'):'';
-    return `<div class="grow"><span class="gcat">${g.cat}</span><span class="gdesc">${g.desc}</span><span class="gdata">${d}</span><span class="gval">− R$ ${Number(g.valor).toFixed(2)}</span><button class="btn-ghost" onclick="delGasto('${g.id}')">✕</button></div>`;
+    const qtd = g.qtd || 1;
+    const valorUnit = Number(g.valor);
+    const totalItem = g.total || valorUnit * qtd;
+    const qtdInfo = qtd > 1 ? `<span class="gqtd">${qtd}x R$ ${valorUnit.toFixed(2)}</span>` : '';
+    return `<div class="grow">
+      <span class="gcat">${g.cat}</span>
+      <span class="gdesc">${g.desc}${qtdInfo}</span>
+      <span class="gdata">${d}</span>
+      <span class="gval">− R$ ${totalItem.toFixed(2)}</span>
+      <button class="btn-ghost" onclick="delGasto('${g.id}')">✕</button>
+    </div>`;
   }).join('');
-  const total=gastos.reduce((s,g)=>s+Number(g.valor),0);
+  const total=gastos.reduce((s,g)=>s+(g.total||Number(g.valor)),0);
   document.getElementById('total-gastos').innerHTML=`Total de gastos: <strong>R$ ${total.toFixed(2)}</strong>`;
 }
 
