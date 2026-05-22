@@ -490,10 +490,15 @@ function iniciarApp() {
 
 checarLogin();
 
-function showToast(msg) {
+let toastTimer = null;
+function showToast(msg, type = 'default') {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  if (toastTimer) clearTimeout(toastTimer);
+  t.textContent = msg;
+  t.className = 'toast' + (type !== 'default' ? ' toast-' + type : '');
+  void t.offsetWidth;
+  t.classList.add('show');
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 function startListeners() {
@@ -592,7 +597,7 @@ window.confirmarPagamento = async function() {
   btn.disabled = true; btn.textContent = 'Salvando...';
   try {
     await setDoc(doc(db,'reservas',modalReservaId), { pago: true, formaPagamento: pgtoSelecionado }, { merge: true });
-    showToast('✓ Pagamento confirmado via ' + pgtoSelecionado + '!');
+    showToast('✓ Pagamento confirmado via ' + pgtoSelecionado + '!', 'success');
     closeModal();
   } catch(e) { alert('Erro: ' + e.message); btn.disabled = false; btn.textContent = 'Confirmar pagamento'; }
 };
@@ -602,7 +607,7 @@ window.cancelarPagamento = async function() {
   if (!confirm('Cancelar o pagamento desta reserva?')) return;
   try {
     await setDoc(doc(db,'reservas',modalReservaId), { pago: false, formaPagamento: '' }, { merge: true });
-    showToast('Pagamento cancelado.');
+    showToast('Pagamento cancelado.', 'warning');
     closeModal();
   } catch(e) { alert('Erro: ' + e.message); }
 };
@@ -624,7 +629,7 @@ window.addReserva = async function() {
     await addDoc(collection(db,'reservas'), { nome, tel, modelo, tipo, data, hora, servico, valor, pago: false, formaPagamento: '', criadoEm: serverTimestamp() });
     ['r-nome','r-tel','r-modelo','r-valor'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('r-tipo').value = '';
-    showToast('Reserva adicionada!');
+    showToast('Reserva adicionada!', 'success');
   } catch(e) { alert('Erro ao salvar: ' + e.message); }
   btn.disabled = false; btn.textContent = '+ Adicionar reserva';
 };
@@ -632,7 +637,7 @@ window.addReserva = async function() {
 window.delReserva = async function(id, e) {
   e.stopPropagation();
   if (!confirm('Remover esta reserva?')) return;
-  try { await deleteDoc(doc(db,'reservas',id)); showToast('Reserva removida.'); }
+  try { await deleteDoc(doc(db,'reservas',id)); showToast('Reserva removida.', 'error'); }
   catch(e) { alert('Erro: ' + e.message); }
 };
 
@@ -751,7 +756,7 @@ function escHtml(str) { return String(str||'').replace(/&/g,'&amp;').replace(/</
 window.toggleCk = function(id) { document.getElementById('ck-body-'+id).classList.toggle('open'); };
 window.salvarObs = async function(id) {
   const obs = document.getElementById('obs-'+id).value.trim();
-  try { await setDoc(doc(db,'reservas',id), { observacoes: obs }, { merge: true }); showToast('Observações salvas!'); }
+  try { await setDoc(doc(db,'reservas',id), { observacoes: obs }, { merge: true }); showToast('Observações salvas!', 'success'); }
   catch(e) { alert('Erro: ' + e.message); }
 };
 window.limparObs = function(id) { document.getElementById('obs-'+id).value = ''; };
@@ -813,13 +818,13 @@ window.addGasto = async function() {
     document.getElementById('g-desc').value='';
     document.getElementById('g-valor').value='';
     document.getElementById('g-qtd').value='1';
-    showToast('Gasto lançado!');
+    showToast('Gasto lançado!', 'success');
   } catch(e) { alert('Erro: '+e.message); }
   btn.disabled=false; btn.textContent='+ Lançar gasto';
 };
 window.delGasto = async function(id) {
   if (!confirm('Remover este gasto?')) return;
-  try { await deleteDoc(doc(db,'gastos',id)); showToast('Gasto removido.'); }
+  try { await deleteDoc(doc(db,'gastos',id)); showToast('Gasto removido.', 'error'); }
   catch(e) { alert('Erro: '+e.message); }
 };
 function renderGastos() {
