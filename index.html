@@ -502,6 +502,9 @@ function checarLogin() {
   if (sessionStorage.getItem('ar_logado') === 'sim') {
     document.getElementById('login-screen').classList.add('hide');
     iniciarApp();
+  } else {
+    // Não está logado: esconde o loading para mostrar a tela de login
+    document.getElementById('loading').classList.add('hide');
   }
 }
 
@@ -915,6 +918,4 @@ function renderDashCharts() {
 }
 
 // ── GASTOS ──
-window.addGasto = async function() {
-  const desc=document.getElementById('g-desc').value.trim(), cat=document.getElementById('g-cat').value;
-  const valor=par
+window.addGasto
