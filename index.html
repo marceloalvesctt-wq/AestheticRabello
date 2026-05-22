@@ -753,7 +753,9 @@ function renderLista() {
     const bc = r.tipo==='pequeno'?'bp':r.tipo==='medio'?'bm':'bg2';
     const tagHtml = r.pago
       ? `<div class="pgto-tag tag-pago">✓ ${r.formaPagamento||'Pago'}</div>`
-      : `<div class="pgto-tag tag-pend">Aguardando pgto</div>`;
+      : r.sinal && r.sinal.valor
+        ? `<div class="pgto-tag" style="background:rgba(41,128,185,.12);color:#5dade2;border:1px solid rgba(41,128,185,.25)">💰 Sinal R$ ${Number(r.sinal.valor).toFixed(2)}</div>`
+        : `<div class="pgto-tag tag-pend">Aguardando pgto</div>`;
     return `<div class="rcard${r.pago?' pago':''}" onclick="abrirModal('${r.id}')">
       <div class="tbadge ${bc}">🚗</div>
       <div class="ri">
