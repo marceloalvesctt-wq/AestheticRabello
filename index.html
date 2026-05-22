@@ -14,9 +14,46 @@ body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;fon
 .loading-sub{font-size:11px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase}
 .spinner{width:22px;height:22px;border:2px solid rgba(245,197,24,.2);border-top-color:var(--yellow);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.toast{position:fixed;bottom:calc(var(--nav-h) + 12px);left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--yellow);color:var(--yellow2);padding:10px 20px;border-radius:20px;font-size:13px;z-index:998;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
-.toast.show{opacity:1}
-@media(min-width:700px){.toast{bottom:20px;left:auto;right:20px;transform:none;border-radius:var(--radius-sm)}}
+.toast{
+  position:fixed;
+  bottom:calc(var(--nav-h) + 16px);
+  left:50%;
+  transform:translateX(-50%) translateY(12px);
+  background:var(--surface);
+  border:1px solid rgba(245,197,24,.25);
+  box-shadow:0 8px 32px rgba(0,0,0,.55), 0 0 0 1px rgba(245,197,24,.06);
+  color:var(--white);
+  padding:12px 18px;
+  border-radius:14px;
+  font-size:13px;
+  font-weight:500;
+  letter-spacing:.02em;
+  z-index:998;
+  opacity:0;
+  transition:opacity .28s ease, transform .28s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;
+  white-space:nowrap;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  max-width:calc(100vw - 40px);
+}
+.toast::before{
+  content:'';
+  width:6px;height:6px;
+  border-radius:50%;
+  background:var(--yellow);
+  flex-shrink:0;
+  box-shadow:0 0 6px var(--yellow);
+}
+.toast.toast-success::before{background:#28a745;box-shadow:0 0 6px #28a745}
+.toast.toast-error::before{background:var(--red);box-shadow:0 0 6px var(--red)}
+.toast.toast-warning::before{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(min-width:700px){
+  .toast{bottom:24px;left:50%;transform:translateX(-50%) translateY(12px)}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+}
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
 .modal-overlay.open{opacity:1;pointer-events:all}
