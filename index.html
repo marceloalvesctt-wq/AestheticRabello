@@ -546,7 +546,7 @@ function showToast(msg, type = 'default') {
 }
 
 function startListeners() {
-  const qRes = query(collection(db,'reservas'), orderBy('data'), orderBy('hora'));
+  const qRes = query(collection(db,'reservas'), orderBy('criadoEm', 'desc'));
   onSnapshot(qRes, snap => {
     reservas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderLista();
