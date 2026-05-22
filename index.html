@@ -368,6 +368,25 @@ body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;fon
 
 </div>
 
+<!-- ✅ BOTTOM NAV MOBILE (estava faltando!) -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="bnav-btn active" id="bnav-reservas" onclick="switchViewMobile('reservas')">
+    <span class="bnav-icon">🗓️</span>Reservas
+  </button>
+  <button class="bnav-btn" id="bnav-calendario" onclick="switchViewMobile('calendario')">
+    <span class="bnav-icon">📅</span>Calendário
+  </button>
+  <button class="bnav-btn" id="bnav-checklist" onclick="switchViewMobile('checklist')">
+    <span class="bnav-icon">📋</span>Check List
+  </button>
+  <button class="bnav-btn" id="bnav-dashboard" onclick="switchViewMobile('dashboard')">
+    <span class="bnav-icon">📊</span>Dashboard
+  </button>
+  <button class="bnav-btn" id="bnav-gastos" onclick="switchViewMobile('gastos')">
+    <span class="bnav-icon">💸</span>Gastos
+  </button>
+</nav>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
 import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
@@ -453,12 +472,30 @@ function startListeners() {
   onSnapshot(qGas, snap => { gastos = snap.docs.map(d => ({ id: d.id, ...d.data() })); });
 }
 
-// NAV
+// NAV DESKTOP
 window.switchView = function(v, btn) {
   document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
   document.getElementById('view-' + v).classList.add('active');
   btn.classList.add('active');
+  // Sincroniza bottom nav
+  document.querySelectorAll('.bnav-btn').forEach(el => el.classList.remove('active'));
+  const bnavBtn = document.getElementById('bnav-' + v);
+  if (bnavBtn) bnavBtn.classList.add('active');
+  if (v === 'calendario') renderCal();
+  if (v === 'dashboard') renderDash();
+  if (v === 'gastos') renderGastos();
+  if (v === 'checklist') renderChecklist();
+};
+
+// NAV MOBILE
+window.switchViewMobile = function(v) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.bnav-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  document.getElementById('bnav-' + v).classList.add('active');
+  // Sincroniza nav desktop
+  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
   if (v === 'calendario') renderCal();
   if (v === 'dashboard') renderDash();
   if (v === 'gastos') renderGastos();
@@ -478,7 +515,6 @@ window.abrirModal = function(id) {
   document.getElementById('modal-datahora').textContent = d + ' às ' + r.hora;
   document.getElementById('modal-valor').textContent = 'R$ ' + Number(r.valor).toFixed(2);
 
-  // reset botões
   ['pix','dinheiro','debito','credito'].forEach(k => document.getElementById('pgto-'+k).classList.remove('selected'));
   document.getElementById('btn-confirmar-pgto').disabled = true;
 
@@ -683,7 +719,7 @@ window.salvarObs = async function(id) {
 };
 window.limparObs = function(id) { document.getElementById('obs-'+id).value = ''; };
 
-// DASHBOARD — só reservas pagas
+// DASHBOARD
 function renderDash() {
   const y = today.getFullYear(), m = today.getMonth();
   const mR = reservas.filter(r => r.pago && (() => { const d=new Date(r.data); return d.getFullYear()===y&&d.getMonth()===m; })());
@@ -698,19 +734,16 @@ function renderDash() {
   el.textContent = 'R$ '+luc.toFixed(2);
   el.style.color = luc>=0?'#28a745':'#e74c3c';
 
-  // Receita por tipo
   const tr = {pequeno:0,medio:0,grande:0};
   mR.forEach(r => { if(tr[r.tipo]!==undefined) tr[r.tipo]+=Number(r.valor); });
   document.getElementById('leg-tipo').innerHTML = [{k:'pequeno',l:'Pequeno',c:'#5dade2'},{k:'medio',l:'Médio',c:'#F5C518'},{k:'grande',l:'Grande',c:'#e74c3c'}].map(x=>`<span><span class="lsq" style="background:${x.c}"></span>${x.l} R$ ${tr[x.k].toFixed(0)}</span>`).join('');
   if(chTipo) chTipo.destroy();
   chTipo = new Chart(document.getElementById('ch-tipo'),{type:'doughnut',data:{labels:['Pequeno','Médio','Grande'],datasets:[{data:[tr.pequeno,tr.medio,tr.grande],backgroundColor:['#5dade2','#F5C518','#e74c3c'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'60%'}});
 
-  // Receita vs Gastos
   document.getElementById('leg-rg').innerHTML = `<span><span class="lsq" style="background:#F5C518"></span>Receita R$ ${rec.toFixed(0)}</span><span><span class="lsq" style="background:#e74c3c"></span>Gastos R$ ${gas.toFixed(0)}</span>`;
   if(chRG) chRG.destroy();
   chRG = new Chart(document.getElementById('ch-rg'),{type:'bar',data:{labels:['Este mês'],datasets:[{label:'Receita',data:[rec],backgroundColor:'#F5C518'},{label:'Gastos',data:[gas],backgroundColor:'#e74c3c'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#777',callback:v=>'R$'+v}},x:{grid:{display:false},ticks:{color:'#777'}}}}});
 
-  // Formas de pagamento
   const fp = {};
   mR.forEach(r => { const f=r.formaPagamento||'Outro'; fp[f]=(fp[f]||0)+1; });
   const fpLabels = Object.keys(fp);
@@ -719,7 +752,6 @@ function renderDash() {
   if(chPgto) chPgto.destroy();
   chPgto = new Chart(document.getElementById('ch-pgto'),{type:'doughnut',data:{labels:fpLabels.length?fpLabels:['—'],datasets:[{data:fpLabels.length?fpLabels.map(l=>fp[l]):[1],backgroundColor:fpCols,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'55%'}});
 
-  // Serviços
   const sc={};
   mR.forEach(r => { sc[r.servico]=(sc[r.servico]||0)+1; });
   const sl=Object.keys(sc);
