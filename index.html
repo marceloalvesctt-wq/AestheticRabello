@@ -465,6 +465,36 @@ body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;fon
   <button class="bnav-btn"        id="bnav-gastos"     onclick="switchViewMobile('gastos')"><span class="bnav-icon">💸</span>Gastos</button>
 </nav>
 
+<!-- Script normal: login não depende do module estar pronto -->
+<script>
+const USUARIOS_LOGIN = { 'adminlocal123': '171304' };
+
+window.fazerLogin = function() {
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const err  = document.getElementById('login-err');
+  if (USUARIOS_LOGIN[user] && USUARIOS_LOGIN[user] === pass) {
+    err.textContent = '';
+    sessionStorage.setItem('ar_logado','sim');
+    document.getElementById('login-screen').classList.add('hide');
+    document.getElementById('loading').classList.remove('hide');
+    // Sinaliza para o module iniciar o app
+    window._loginOk = true;
+    if (window._iniciarApp) window._iniciarApp();
+  } else {
+    err.textContent = 'Usuário ou senha incorretos.';
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
+  }
+};
+
+window.fazerLogout = function() {
+  if (!confirm('Deseja sair do sistema?')) return;
+  sessionStorage.removeItem('ar_logado');
+  location.reload();
+};
+</script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
 import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
@@ -496,39 +526,17 @@ Chart.defaults.color = '#777';
 Chart.defaults.borderColor = 'rgba(245,197,24,0.08)';
 
 // ── LOGIN ──
-const USUARIOS = { 'adminlocal123': '171304' };
-
 function checarLogin() {
   if (sessionStorage.getItem('ar_logado') === 'sim') {
     document.getElementById('login-screen').classList.add('hide');
     document.getElementById('loading').classList.remove('hide');
     iniciarApp();
   }
-  // Se não logado: loading já começa hide, login-screen aparece normalmente
+  // Expõe iniciarApp para o script normal usar após login
+  window._iniciarApp = iniciarApp;
+  // Se o login já aconteceu antes do module carregar
+  if (window._loginOk) iniciarApp();
 }
-
-window.fazerLogin = function() {
-  const user = document.getElementById('login-user').value.trim();
-  const pass = document.getElementById('login-pass').value;
-  const err  = document.getElementById('login-err');
-  if (USUARIOS[user] && USUARIOS[user] === pass) {
-    err.textContent = '';
-    sessionStorage.setItem('ar_logado','sim');
-    document.getElementById('login-screen').classList.add('hide');
-    document.getElementById('loading').classList.remove('hide');
-    iniciarApp();
-  } else {
-    err.textContent = 'Usuário ou senha incorretos.';
-    document.getElementById('login-pass').value = '';
-    document.getElementById('login-pass').focus();
-  }
-};
-
-window.fazerLogout = function() {
-  if (!confirm('Deseja sair do sistema?')) return;
-  sessionStorage.removeItem('ar_logado');
-  location.reload();
-};
 
 function iniciarApp() {
   document.getElementById('r-data').valueAsDate = today;
@@ -912,5 +920,4 @@ function renderDashCharts() {
     mPago.forEach(r=>{ const f=r.formaPagamento||'Outro'; fp[f]=(fp[f]||0)+1; fr[f]=(fr[f]||0)+Number(r.valor); });
     const fl=Object.keys(fp);
     document.getElementById('leg-pgto').innerHTML=fl.map((l,i)=>`<span><span class="lsq" style="background:${COLS[i%8]}"></span>${l} (${fp[l]})</span>`).join('');
-    chPgto=new Chart(document.getElementById('ch-pgto'),{type:'doughnut',data:{labels:fl.length?fl:['—'],datasets:[{data:fl.length?fl.map(l=>fp[l]):[1],backgroundColor:fl.length?fl.map((_,i)=>COLS[i%8]):['#444'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'55%'}});
-    chPgtoRec=new Chart(document.getElementById('ch-pgto-rec'),{type:'doughnut',data:{labels:fl.length?fl:['—'],datasets:[{data:fl.length?fl.map(l=>fr[l]):[1],backgroundColor:fl.length?fl.map((_,i)=>COLS[i%8]):['#444'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{dis
+    chPgto=new Chart(document.getElementById('ch-pgto'),{type:'doughnut',data:{labels:fl.length?fl:['—'],datasets:[{data:fl.length?fl.map(l=>fp[l]):[1],backgroundColor:fl.length?fl.map((_,i)=>COLS[i%8]):['#444'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'55
