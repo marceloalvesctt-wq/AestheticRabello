@@ -365,7 +365,14 @@ body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;fon
 
   <!-- DASHBOARD -->
   <div id="view-dashboard" class="view">
-    <div class="sec" style="margin-top:4px">Resumo do mês <span style="color:var(--muted);font-size:10px;text-transform:none;letter-spacing:0">&nbsp;— apenas pagamentos confirmados</span></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;margin-top:4px">
+      <div class="sec" style="margin-bottom:0;flex:1">Resumo <span style="color:var(--muted);font-size:10px;text-transform:none;letter-spacing:0">&nbsp;— pagamentos confirmados</span></div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+        <button class="cal-nb" onclick="dashNavMes(-1)">&#8249;</button>
+        <span id="dash-mes-label" style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--yellow);letter-spacing:.06em;min-width:110px;text-align:center"></span>
+        <button class="cal-nb" onclick="dashNavMes(1)">&#8250;</button>
+      </div>
+    </div>
     <div class="metrics">
       <div class="metric"><div class="mlbl">Receita</div><div class="mval" id="m-receita">R$ 0</div><div class="msub">confirmados</div></div>
       <div class="metric"><div class="mlbl">Reservas</div><div class="mval" id="m-qtd">0</div><div class="msub">pagas</div></div>
@@ -504,9 +511,25 @@ let chTipo=null,chRG=null,chServ=null,chServRec=null,chPgto=null,chPgtoRec=null,
 let modalReservaId=null, pgtoSelecionado=null, sinalPgtoSelecionado=null;
 let activeDashTab='mes';
 const today=new Date();
+// Mês selecionado no dashboard (começa no mês atual)
+let dashAno=today.getFullYear(), dashMes=today.getMonth();
 const DIAS_SEMANA=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DIAS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+function atualizarLabelDashMes(){
+  const el=document.getElementById('dash-mes-label');
+  if(el) el.textContent=MESES[dashMes].substring(0,3).toUpperCase()+' '+dashAno;
+}
+
+window.dashNavMes=function(dir){
+  dashMes+=dir;
+  if(dashMes>11){dashMes=0;dashAno++;}
+  if(dashMes<0){dashMes=11;dashAno--;}
+  atualizarLabelDashMes();
+  renderDash();
+};
+
 const COLS=['#F5C518','#28a745','#5dade2','#8e44ad','#e74c3c','#e67e22','#1abc9c','#e91e63'];
 
 Chart.defaults.color='#777';
@@ -828,7 +851,8 @@ function destroyCharts(){
 }
 
 function renderDash(){
-  const y=today.getFullYear(),m=today.getMonth();
+  atualizarLabelDashMes();
+  const y=dashAno,m=dashMes;
   const mRes=reservas.filter(r=>{const d=new Date(r.data);return d.getFullYear()===y&&d.getMonth()===m;});
   const mPago=mRes.filter(r=>r.pago);
   const mG=gastos.filter(g=>{const d=new Date(g.data);return d.getFullYear()===y&&d.getMonth()===m;});
@@ -857,7 +881,7 @@ function renderDash(){
 
 function renderDashCharts(){
   destroyCharts();
-  const y=today.getFullYear(),m=today.getMonth();
+  const y=dashAno,m=dashMes;
   const mPago=reservas.filter(r=>r.pago&&(()=>{const d=new Date(r.data);return d.getFullYear()===y&&d.getMonth()===m;})());
   const mRes=reservas.filter(r=>{const d=new Date(r.data);return d.getFullYear()===y&&d.getMonth()===m;});
   const mG=gastos.filter(g=>{const d=new Date(g.data);return d.getFullYear()===y&&d.getMonth()===m;});
