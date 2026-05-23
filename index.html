@@ -236,7 +236,7 @@ body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;fon
   </div>
 </div>
 
-<div class="loading-overlay" id="loading">
+<div class="loading-overlay hide" id="loading">
   <div class="spinner"></div>
   <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--yellow);letter-spacing:.1em">AESTHETICS RABELLO</div>
   <div class="loading-sub">Conectando ao banco de dados...</div>
@@ -501,11 +501,10 @@ const USUARIOS = { 'adminlocal123': '171304' };
 function checarLogin() {
   if (sessionStorage.getItem('ar_logado') === 'sim') {
     document.getElementById('login-screen').classList.add('hide');
+    document.getElementById('loading').classList.remove('hide');
     iniciarApp();
-  } else {
-    // Não está logado: esconde o loading para mostrar a tela de login
-    document.getElementById('loading').classList.add('hide');
   }
+  // Se não logado: loading já começa hide, login-screen aparece normalmente
 }
 
 window.fazerLogin = function() {
@@ -516,6 +515,7 @@ window.fazerLogin = function() {
     err.textContent = '';
     sessionStorage.setItem('ar_logado','sim');
     document.getElementById('login-screen').classList.add('hide');
+    document.getElementById('loading').classList.remove('hide');
     iniciarApp();
   } else {
     err.textContent = 'Usuário ou senha incorretos.';
@@ -913,9 +913,4 @@ function renderDashCharts() {
     const fl=Object.keys(fp);
     document.getElementById('leg-pgto').innerHTML=fl.map((l,i)=>`<span><span class="lsq" style="background:${COLS[i%8]}"></span>${l} (${fp[l]})</span>`).join('');
     chPgto=new Chart(document.getElementById('ch-pgto'),{type:'doughnut',data:{labels:fl.length?fl:['—'],datasets:[{data:fl.length?fl.map(l=>fp[l]):[1],backgroundColor:fl.length?fl.map((_,i)=>COLS[i%8]):['#444'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'55%'}});
-    chPgtoRec=new Chart(document.getElementById('ch-pgto-rec'),{type:'doughnut',data:{labels:fl.length?fl:['—'],datasets:[{data:fl.length?fl.map(l=>fr[l]):[1],backgroundColor:fl.length?fl.map((_,i)=>COLS[i%8]):['#444'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'55%'}});
-  }
-}
-
-// ── GASTOS ──
-window.addGasto
+    chPgtoRec=new Chart(document.getElementById('ch-pgto-rec'),{type:'doughnut',data:{labels:fl.length?fl:['—'],datasets:[{data:fl.length?fl.map(l=>fr[l]):[1],backgroundColor:fl.length?fl.map((_,i)=>COLS[i%8]):['#444'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{dis
